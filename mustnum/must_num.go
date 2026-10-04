@@ -24,7 +24,7 @@ type Num interface {
 // Less validates that a is less than b. Panics if a >= b.
 // Less 验证 a 小于 b。如果 a >= b 则触发 panic。
 func Less[V Num](a, b V) {
-	if !(a < b) {
+	if !(a < b) { //nolint:staticcheck // QF1001: negation rejects NaN; a >= b does not.
 		zaplog.ZAPS.Skip1.LOG.Panic("EXPECTED A < B", zap.Any("a", a), zap.Any("b", b))
 	}
 }
@@ -32,7 +32,7 @@ func Less[V Num](a, b V) {
 // Lt validates that a is less than b. Alias of Less function. Panics if a >= b.
 // Lt 验证 a 小于 b。Less 函数的别名。如果 a >= b 则触发 panic。
 func Lt[V Num](a, b V) {
-	if !(a < b) {
+	if !(a < b) { //nolint:staticcheck // QF1001: negation rejects NaN; a >= b does not.
 		zaplog.ZAPS.Skip1.LOG.Panic("EXPECTED A < B", zap.Any("a", a), zap.Any("b", b))
 	}
 }
@@ -40,7 +40,7 @@ func Lt[V Num](a, b V) {
 // Lte validates that a is less than / at most b. Panics if a > b.
 // Lte 验证 a 小于或等于 b。如果 a > b 则触发 panic。
 func Lte[V Num](a, b V) {
-	if !(a <= b) {
+	if !(a <= b) { //nolint:staticcheck // QF1001: negation rejects NaN; a > b does not.
 		zaplog.ZAPS.Skip1.LOG.Panic("EXPECTED A <= B", zap.Any("a", a), zap.Any("b", b))
 	}
 }
@@ -48,7 +48,7 @@ func Lte[V Num](a, b V) {
 // Gt validates that a exceeds b. Panics if a <= b.
 // Gt 验证 a 大于 b。如果 a <= b 则触发 panic。
 func Gt[V Num](a, b V) {
-	if !(a > b) {
+	if !(a > b) { //nolint:staticcheck // QF1001: negation rejects NaN; a <= b does not.
 		zaplog.ZAPS.Skip1.LOG.Panic("EXPECTED A > B", zap.Any("a", a), zap.Any("b", b))
 	}
 }
@@ -56,7 +56,7 @@ func Gt[V Num](a, b V) {
 // Gte validates that a exceeds / matches b. Panics if a < b.
 // Gte 验证 a 大于或等于 b。如果 a < b 则触发 panic。
 func Gte[V Num](a, b V) {
-	if !(a >= b) {
+	if !(a >= b) { //nolint:staticcheck // QF1001: negation rejects NaN; a < b does not.
 		zaplog.ZAPS.Skip1.LOG.Panic("EXPECTED A >= B", zap.Any("a", a), zap.Any("b", b))
 	}
 }
@@ -81,7 +81,7 @@ func Zero[V Num](a V) {
 // Positive validates that value exceeds zero. Panics if value <= 0.
 // Positive 验证值严格大于零。如果值 <= 0 则触发 panic。
 func Positive[V Num](v V) {
-	if !(v > 0) {
+	if !(v > 0) { //nolint:staticcheck // QF1001: negation rejects NaN; v <= 0 does not.
 		zaplog.ZAPS.Skip1.LOG.Panic("EXPECTED V > 0", zap.Any("v", v))
 	}
 }
@@ -89,7 +89,7 @@ func Positive[V Num](v V) {
 // NonNegative accepts zero and positive values. NaN fails the check.
 // NonNegative 断言数值非负，接受零与正数，拒绝 NaN。
 func NonNegative[V Num](v V) {
-	if !(v >= 0) {
+	if !(v >= 0) { //nolint:staticcheck // QF1001: negation rejects NaN; v < 0 does not.
 		zaplog.ZAPS.Skip1.LOG.Panic("EXPECTED V >= 0", zap.Any("v", v))
 	}
 }
@@ -97,7 +97,7 @@ func NonNegative[V Num](v V) {
 // ZeroPositive accepts zero and positive values, like NonNegative. NaN fails the check.
 // ZeroPositive 断言数值为零或正数，与 NonNegative 等价，拒绝 NaN。
 func ZeroPositive[V Num](v V) {
-	if !(v >= 0) {
+	if !(v >= 0) { //nolint:staticcheck // QF1001: negation rejects NaN; v < 0 does not.
 		zaplog.ZAPS.Skip1.LOG.Panic("EXPECTED V >= 0", zap.Any("v", v))
 	}
 }
@@ -105,7 +105,7 @@ func ZeroPositive[V Num](v V) {
 // Negative validates that value is below zero. Panics if value >= 0.
 // Negative 验证值严格小于零。如果值 >= 0 则触发 panic。
 func Negative[V Num](v V) {
-	if !(v < 0) {
+	if !(v < 0) { //nolint:staticcheck // QF1001: negation rejects NaN; v >= 0 does not.
 		zaplog.ZAPS.Skip1.LOG.Panic("EXPECTED V < 0", zap.Any("v", v))
 	}
 }
@@ -113,7 +113,7 @@ func Negative[V Num](v V) {
 // NonPositive accepts zero and negative values. NaN fails the check.
 // NonPositive 断言数值非正，接受零与负数，拒绝 NaN。
 func NonPositive[V Num](v V) {
-	if !(v <= 0) {
+	if !(v <= 0) { //nolint:staticcheck // QF1001: negation rejects NaN; v > 0 does not.
 		zaplog.ZAPS.Skip1.LOG.Panic("EXPECTED V <= 0", zap.Any("v", v))
 	}
 }
@@ -121,7 +121,7 @@ func NonPositive[V Num](v V) {
 // ZeroNegative accepts zero and negative values, like NonPositive. NaN fails the check.
 // ZeroNegative 断言数值为零或负数，与 NonPositive 等价，拒绝 NaN。
 func ZeroNegative[V Num](v V) {
-	if !(v <= 0) {
+	if !(v <= 0) { //nolint:staticcheck // QF1001: negation rejects NaN; v > 0 does not.
 		zaplog.ZAPS.Skip1.LOG.Panic("EXPECTED V <= 0", zap.Any("v", v))
 	}
 }
