@@ -1,6 +1,6 @@
 // Package must2 provides assertion functions with Skip2 stack frame adjustment
 // Implements panic-on-failure validation with 2-depth skip to produce accurate stack traces
-// Used when assertions are wrapped by one extra function invocation
+// Used when assertions have one extra function invocation
 // Integrates with zap logging using Skip2 configuration to report correct source location
 //
 // must2 提供带 Skip2 栈帧调整的断言函数
@@ -29,6 +29,15 @@ func Done(err error) {
 	if err != nil {
 		zaplog.ZAPS.Skip2.LOG.Panic("EXPECTED NO ERROR(BUT HAS ERROR)", zap.Error(err))
 	}
+}
+
+// Full expects non-nil data with Skip2 stack adjustment.
+// Full 断言指针非 nil，跳过两层调用以定位业务代码。
+func Full[T any](v *T) *T {
+	if v == nil {
+		zaplog.ZAPS.Skip2.LOG.Panic("VALUE ABSENT(SHOULD BE PRESENT)")
+	}
+	return v
 }
 
 // Nice validates non-zero value with Skip2 stack frame adjustment. Returns value if non-zero, panics if zero.

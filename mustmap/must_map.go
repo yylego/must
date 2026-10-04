@@ -92,10 +92,10 @@ func Len[K comparable, V any](a map[K]V, n int) {
 
 // Get func get value of element from the map. If the element does not exist, it panics.
 // Get 根据给定的键从 map 中检索值，如果键不存在，则触发 panic。
-func Get[K, V comparable](a map[K]V, key K) V {
-	value, exists := a[key]
+func Get[K comparable, V any](a map[K]V, k K) V {
+	value, exists := a[k]
 	if !exists {
-		zaplog.ZAPS.Skip1.LOG.Panic("KEY NOT IN MAP(SHOULD BE IN)", zap.Any("key", key))
+		zaplog.ZAPS.Skip1.LOG.Panic("KEY NOT IN MAP(SHOULD BE IN)", zap.Any("k", k))
 	}
 	return value
 }

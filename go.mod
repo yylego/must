@@ -5,8 +5,8 @@ go 1.22.6
 require (
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.11.1
-	github.com/yylego/zaplog v0.0.0
-	go.uber.org/zap v1.27.1
+	github.com/yylego/zaplog v0.0.1
+	go.uber.org/zap v1.28.0
 )
 
 require (

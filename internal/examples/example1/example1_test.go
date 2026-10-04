@@ -96,7 +96,7 @@ func TestZeroOutcomeFails(t *testing.T) {
 func TestOperationWithIssueHandled(t *testing.T) {
 	// Demo: Show safe handling pattern
 	// 演示：展示安全处理模式
-	issue := performRiskyTask()
+	issue := performTask()
 	if issue != nil {
 		t.Logf("Task has issue as expected: %v", issue)
 	} else {
@@ -104,7 +104,7 @@ func TestOperationWithIssueHandled(t *testing.T) {
 	}
 }
 
-func performRiskyTask() (issue error) {
+func performTask() (issue error) {
 	// Simulate task that might have issues
 	// 模拟可能有问题的任务
 	return fmt.Errorf("simulated issue")

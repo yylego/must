@@ -1,6 +1,6 @@
 // Package must3 provides assertion functions with Skip3 stack frame adjustment
 // Implements panic-on-failure validation with 3-depth skip to produce accurate stack traces
-// Used when assertions are wrapped by two extra function invocations
+// Used when assertions have two extra function invocations
 // Integrates with zap logging using Skip3 configuration to report correct source location
 //
 // must3 提供带 Skip3 栈帧调整的断言函数

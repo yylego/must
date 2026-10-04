@@ -74,10 +74,10 @@ func TestMultipleChecks(t *testing.T) {
 	t.Log("Data checks passed")
 }
 
-func TestEmptySliceSafeHandling(t *testing.T) {
+func TestVacantSliceSafeHandling(t *testing.T) {
 	// Demo: Safe handling when slice might be without items
 	// 演示：安全处理可能无元素的切片
-	items := getOptionalItems()
+	items := getItems()
 
 	if len(items) > 0 {
 		must.Have(items) // Safe when we know it has items
@@ -94,7 +94,7 @@ func getData() []string {
 	return []string{"high", "important", "medium"}
 }
 
-func getOptionalItems() []string {
+func getItems() []string {
 	// Simulate function that might return without items
 	// 模拟可能返回无元素的函数
 	return []string{}

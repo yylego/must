@@ -79,21 +79,21 @@ func TestDataProcessing(t *testing.T) {
 func TestReferencesAndPointing(t *testing.T) {
 	// Demo: Working with pointers
 	// 演示：使用指针
-	t.Run("Full pointer", func(t *testing.T) {
+	t.Run("non-nil data", func(t *testing.T) {
 		value := 100
-		ptr := &value
+		data := &value
 
-		must.Full(ptr)         // pointer is not absent
-		must.Nice(*ptr)        // Value is not zero
-		must.Equals(*ptr, 100) // Value is correct
+		must.Full(data)         // Data is not absent
+		must.Nice(*data)        // Value is not zero
+		must.Equals(*data, 100) // Value is correct
 	})
 
-	t.Run("Null pointer", func(t *testing.T) {
-		var ptr *int
-		must.Null(ptr) // pointer is absent
+	t.Run("nil data", func(t *testing.T) {
+		var data *int
+		must.Null(data) // Data is absent
 	})
 
-	t.Log("ptr checks passed")
+	t.Log("Data checks passed")
 }
 
 func TestComparison(t *testing.T) {

@@ -1,5 +1,5 @@
 // Package mustmap_test provides comprehensive testing of mustmap assertion package
-// Tests include map equality, difference validation, length checking, and key existence verification
+// Tests include map matching, difference validation, length checking, and item lookup
 // Checks each assertion functions with both success and failure cases
 //
 // mustmap_test 为 mustmap 断言包提供全面的测试
@@ -14,8 +14,8 @@ import (
 	"github.com/yylego/must/mustmap"
 )
 
-// TestEquals tests map equality assertion
-// Validates Equals passes when maps have same content and panics when maps differ
+// TestEquals tests matching maps
+// Validates Equals passes when maps have same content and panics on mismatch
 //
 // TestEquals 测试 map 相等断言
 // 验证 Equals 在 map 内容相同时通过，在 map 不同时 panic
@@ -38,7 +38,7 @@ func TestEquals(t *testing.T) {
 }
 
 // TestDiff tests map difference assertion
-// Validates Diff passes when maps differ and panics when maps are same
+// Validates Diff passes on mismatch and panics when maps are same
 //
 // TestDiff 测试 map 差异断言
 // 验证 Diff 在 map 不同时通过，在 map 相同时 panic
@@ -61,7 +61,7 @@ func TestDiff(t *testing.T) {
 }
 
 // TestDifferent tests map difference assertion
-// Validates Different passes when maps differ and panics when maps are same
+// Validates Different passes on mismatch and panics when maps are same
 //
 // TestDifferent 测试 map 差异断言
 // 验证 Different 在 map 不同时通过，在 map 相同时 panic
@@ -83,8 +83,8 @@ func TestDifferent(t *testing.T) {
 	})
 }
 
-// TestHave tests map non-empty assertion
-// Validates Have passes with non-empty maps and panics with empty maps
+// TestHave tests maps with items
+// Validates Have passes with items and panics without items
 //
 // TestHave 测试 map 非空断言
 // 验证 Have 在 map 非空时通过，在 map 为空时 panic
@@ -99,8 +99,8 @@ func TestHave(t *testing.T) {
 	})
 }
 
-// TestNice tests non-empty map assertion with return
-// Validates Nice returns non-empty maps and panics with empty maps
+// TestNice tests maps with items and returns the map
+// Validates Nice returns maps with items and panics without items
 //
 // TestNice 测试非空 map 断言并返回
 // 验证 Nice 返回非空 map 并在空 map 时 panic
@@ -112,8 +112,8 @@ func TestNice(t *testing.T) {
 	})
 }
 
-// TestZero tests empty map assertion
-// Validates Zero passes with empty maps and panics with non-empty maps
+// TestZero tests vacant maps
+// Validates Zero passes without items and panics with items
 //
 // TestZero 测试空 map 断言
 // 验证 Zero 在空 map 时通过，在非空 map 时 panic
@@ -135,8 +135,8 @@ func TestZero(t *testing.T) {
 	})
 }
 
-// TestNone tests empty map assertion (alias of Zero)
-// Validates None passes with empty maps and panics with non-empty maps
+// TestNone tests vacant maps (alias of Zero)
+// Validates None passes without items and panics with items
 //
 // TestNone 测试空 map 断言（Zero 的别名）
 // 验证 None 在空 map 时通过，在非空 map 时 panic
@@ -196,8 +196,8 @@ func TestLen(t *testing.T) {
 	})
 }
 
-// TestGet tests map key existence with value return
-// Validates Get returns value when key exists and panics when key not found
+// TestGet tests map item lookup
+// Validates Get returns the value when found and panics when absent
 //
 // TestGet 测试 map 键存在性并返回值
 // 验证 Get 在键存在时返回值，在键不存在时 panic
@@ -208,4 +208,11 @@ func TestGet(t *testing.T) {
 	require.Panics(t, func() {
 		mustmap.Get(map[string]int{"a": 1, "b": 2}, "c")
 	})
+}
+
+func TestGetSlice(t *testing.T) {
+	values := map[string][]int{"present": {1, 2}, "nil": nil}
+	require.Equal(t, []int{1, 2}, mustmap.Get(values, "present"))
+	require.Nil(t, mustmap.Get(values, "nil"))
+	require.Panics(t, func() { mustmap.Get(values, "absent") })
 }

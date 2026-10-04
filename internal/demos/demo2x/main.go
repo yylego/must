@@ -6,20 +6,20 @@ import (
 	"github.com/yylego/must"
 )
 
-// Demo2x demonstrates rese package functions
-// Demo2x 演示 rese 包函数
+// Demo2x demonstrates result functions
+// Demo2x 演示结果提取函数
 func main() {
-	fmt.Println("=== Demo 2: Rese Package ===")
+	fmt.Println("=== Demo 2: Result Functions ===")
 
 	// V1 - single value validation
 	config := must.V1(readConfig())
 	fmt.Printf("✓ Config: %s\n", config)
 
-	// V2 - dual value validation
+	// V2 - two-value validation
 	width, height := must.V2(getDimensions())
 	fmt.Printf("✓ Dimensions: %dx%d\n", width, height)
 
-	// P1 - pointer validation
+	// P1 - non-nil data validation
 	admin := must.P1(findAdmin())
 	fmt.Printf("✓ Admin: %s\n", admin.Name)
 

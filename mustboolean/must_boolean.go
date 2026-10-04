@@ -20,7 +20,7 @@ func Conflict(bs ...bool) {
 	for idx, b := range bs {
 		if b {
 			if firstIndex >= 0 {
-				zaplog.ZAPS.Skip1.LOG.Panic("conflict: multiple true values", zap.Int("first", firstIndex), zap.Int("second", idx))
+				zaplog.ZAPS.Skip1.LOG.Panic("CONFLICT: MULTIPLE TRUE VALUES", zap.Int("first", firstIndex), zap.Int("second", idx))
 			}
 			firstIndex = idx
 		}

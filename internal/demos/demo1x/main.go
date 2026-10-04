@@ -24,7 +24,7 @@ func main() {
 	must.Nice(count)
 	fmt.Printf("✓ Valid count: %d\n", count)
 
-	// Equality check
+	// Match check
 	must.Equals("success", getStatus())
 	fmt.Println("✓ Values match")
 
@@ -35,10 +35,10 @@ func main() {
 	must.In("banana", items)
 	fmt.Printf("✓ Slice validated: %v\n", items)
 
-	// Pointer check
+	// Check non-nil data
 	account := getAccount()
 	must.Full(account)
-	fmt.Printf("✓ Pointer valid: %s\n", account.Name)
+	fmt.Printf("✓ Account valid: %s\n", account.Name)
 
 	fmt.Println("\n=== All checks passed! ===")
 }

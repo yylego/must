@@ -1,9 +1,12 @@
+<!-- TEMPLATE (EN) BEGIN: BADGES -->
+
 [![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/yylego/must/release.yml?branch=main&label=BUILD)](https://github.com/yylego/must/actions/workflows/release.yml?query=branch%3Amain)
 [![GoDoc](https://pkg.go.dev/badge/github.com/yylego/must)](https://pkg.go.dev/github.com/yylego/must)
 [![Coverage Status](https://img.shields.io/coveralls/github/yylego/must/main.svg)](https://coveralls.io/github/yylego/must?branch=main)
-[![Supported Go Versions](https://img.shields.io/badge/Go-1.22%2C%201.23%2C%201.24%2C%201.25-lightgrey.svg)](https://go.dev/)
+[![Supported Go Versions](https://img.shields.io/badge/Go-1.22%2B-lightgrey.svg)](https://go.dev/)
 [![GitHub Release](https://img.shields.io/github/release/yylego/must.svg)](https://github.com/yylego/must/releases)
 [![Go Report Card](https://goreportcard.com/badge/github.com/yylego/must)](https://goreportcard.com/report/github.com/yylego/must)
+<!-- TEMPLATE (EN) CLOSE: BADGES -->
 
 # must
 
@@ -17,17 +20,25 @@ Simple assertion utilities with panic-on-failure semantics designed to reduce bo
 
 [中文说明](README.zh.md)
 
-<!-- TEMPLATE (EN) END: LANGUAGE NAVIGATION -->
+<!-- TEMPLATE (EN) CLOSE: LANGUAGE NAVIGATION -->
 
 ## Main Features
 
-🎯 **Panic-on-Failure Validation**: Clean assertions with automatic panic on failure when conditions are violated
-⚡ **Type-Safe Generics**: Comprehensive support with Go generics spanning assertion types
-🔄 **Stack Frame Adjustment**: Precise panic location through intelligent skip configurations
-🌍 **Structured Logging**: Deep integration with zap providing detailed panic context
-📋 **Domain-Specific Packages**: Specialized utilities with numeric, string, slice, and map operations
+- 🎯 **Assertions**: Failed checks log context and panic.
+- ⚡ **Go Generics**: Typed assertions support a range of input types.
+- 🔄 **Stack Frame Adjustment**: Skip settings locate the calling code.
+- 🌍 **Structured Logging**: Zap records panic context.
+- 📋 **Domain-Specific Packages**: Packages include assertions on numbers, strings, slices, and maps.
 
 ---
+
+## Usage Notes
+
+- Failed assertions log context and panic. Use them when a violated condition should stop the current operation; handle expected failures with returned errors.
+- Logs can include input values. Use `mustsecret` assertions to omit sensitive values from logs.
+- `Null` and `Full` accept typed pointers (`*T`). String lengths use bytes, not Unicode code points.
+- Numeric comparisons and sign checks reject NaN. `Num` accepts named types based on its listed numeric types.
+- `mustmap.Get` places no constraint on the value type. It checks that the requested map item exists; a present nil value is valid.
 
 ## Installation
 
@@ -77,12 +88,12 @@ func main() {
 	must.In("banana", items)
 	fmt.Printf("✓ Slice validated: %v\n", items)
 
-	// Pointer check
+	// Check non-nil data
 	account := getAccount()
 	must.Full(account)
-	fmt.Printf("✓ Pointer valid: %s\n", account.Name)
+	fmt.Printf("✓ Account valid: %s\n", account.Name)
 
-	fmt.Println("\n=== All checks passed! ===")
+	fmt.Println("\n=== Checks passed! ===")
 }
 
 type Account struct{ Name string }
@@ -99,7 +110,7 @@ func getAccount() *Account    { return &Account{Name: "test"} }
 
 ---
 
-### Example 2: Rese Package Functions
+### Example 2: Result Functions
 
 ```go
 package main
@@ -111,7 +122,7 @@ import (
 )
 
 func main() {
-	fmt.Println("=== Demo 2: Rese Package ===")
+	fmt.Println("=== Demo 2: Result Functions ===")
 
 	// V1 - single value validation
 	config := must.V1(readConfig())
@@ -136,7 +147,7 @@ func main() {
 	must.Same(data.Status, "active")
 	fmt.Printf("✓ Data: score=%d, status=%s\n", data.Score, data.Status)
 
-	fmt.Println("\n=== All checks passed! ===")
+	fmt.Println("\n=== Checks passed! ===")
 }
 
 type Admin struct{ Name string }
@@ -177,6 +188,10 @@ func main() {
 	// Numeric validations
 	score := getScore()
 	mustnum.Positive(score)
+	mustnum.NonNegative(0) // Accept zero; reject negative values and NaN
+	mustnum.NonPositive(0) // Accept zero and negative values; reject NaN
+	mustnum.ZeroPositive(0) // Same check as NonNegative
+	mustnum.ZeroNegative(0) // Same check as NonPositive
 	mustnum.Gt(score, 60)
 	fmt.Printf("✓ Score: %d\n", score)
 
@@ -204,7 +219,7 @@ func main() {
 	mustmap.Have(data.Metrics)
 	fmt.Printf("✓ Analytics: %d metrics\n", len(data.Metrics))
 
-	fmt.Println("\n=== All checks passed! ===")
+	fmt.Println("\n=== Checks passed! ===")
 }
 
 type Analytics struct {
@@ -228,36 +243,36 @@ func getAnalytics() *Analytics {
 
 Here are the core assertions in `must`, summarized in a table:
 
-| **Function**                 | **Description**                                            | **Example**                   | **Notes**                           |
-| ---------------------------- | ---------------------------------------------------------- | ----------------------------- | ----------------------------------- |
-| **`True(v bool)`**           | Panics if `v` is false.                                    | `must.True(isValid)`          | Validates if `v` is `true`.         |
-| **`Done(err error)`**        | Panics if `err` is not nil.                                | `must.Done(err)`              | Ensures no error occurred.          |
-| **`Must(err error)`**        | Panics if `err` is not nil.                                | `must.Must(err)`              | Same as `Done`.                     |
-| **`Nice(a V)`**              | Panics if `a` is zero.                                     | `must.Nice(value)`            | Ensures `a` is non-zero.            |
-| **`Zero(a V)`**              | Panics if `a` is not zero.                                 | `must.Zero(value)`            | Ensures `a` is zero.                |
-| **`None(a V)`**              | Panics if `a` is non-zero.                                 | `must.None(value)`            | Ensures `a` is zero.                |
-| **`Null(v any)`**            | Panics if `v` is not `nil`.                                | `must.Null(ptr)`              | Ensures `v` is `nil`.               |
-| **`Full(v any)`**            | Panics if `v` is `nil`.                                    | `must.Full(value)`            | Ensures `v` is non-`nil`.           |
-| **`Equals(a, b V)`**         | Panics if `a` and `b` are not the same.                    | `must.Equals(a, b)`           | Checks if `a` equals `b`.           |
-| **`Same(a, b V)`**           | Panics if `a` and `b` are not the same.                    | `must.Same(a, b)`             | Alias of `Equals`.                  |
-| **`SameNice(a, b V)`**       | Panics if `a` and `b` are not the same, both non-zero.     | `must.SameNice(a, b)`         | Ensures same and non-zero.          |
-| **`Sane(a, b V)`**           | Panics if `a` and `b` are not the same, both non-zero.     | `must.Sane(a, b)`             | Alias of `SameNice`.                |
-| **`Diff(a, b V)`**           | Panics if `a` and `b` are the same.                        | `must.Diff(a, b)`             | Ensures values mismatch.            |
-| **`Different(a, b V)`**      | Panics if `a` and `b` are the same.                        | `must.Different(a, b)`        | Alias of `Diff`.                    |
-| **`Is(a, b V)`**             | Panics if `a` and `b` are not the same.                    | `must.Is(a, b)`               | Alias of `Equals`.                  |
-| **`Ise(err, target error)`** | Panics if `err` does not match `target` using `errors.Is`. | `must.Ise(err, targetErr)`    | Matching like `errors.Is` function. |
-| **`Ok(a V)`**                | Panics if `a` is zero.                                     | `must.Ok(value)`              | Ensures `a` is non-zero.            |
-| **`OK(a V)`**                | Alias of `Ok`, checks non-zero value.                      | `must.OK(value)`              | Same as `Ok`.                       |
-| **`TRUE(v bool)`**           | Panics if `v` is false.                                    | `must.TRUE(isValid)`          | Alias of `True`.                    |
-| **`FALSE(v bool)`**          | Panics if `v` is true.                                     | `must.FALSE(isError)`         | Ensures `v` is `false`.             |
-| **`False(v bool)`**          | Panics if `v` is true.                                     | `must.False(isError)`         | Same as `FALSE`.                    |
-| **`Cause(err error)`**       | Panics if `err` is nil, returns the error.                 | `must.Cause(err)`             | Ensures error is present.           |
-| **`Wrong(err error)`**       | Panics if `err` is nil.                                    | `must.Wrong(err)`             | Ensures error is present.           |
-| **`Have(a []T)`**            | Panics if `a` has no elements.                             | `must.Have(slice)`            | Ensures `a` is not vacant.          |
-| **`Length(a []T, n int)`**   | Panics if `a` length is not `n`.                           | `must.Length(slice, 3)`       | Ensures `a` length is `n`.          |
-| **`Len(a []T, n int)`**      | Alias of `Length`, ensures `a` length is `n`.              | `must.Len(slice, 3)`          | Validates `a` length.               |
-| **`In(v T, a []T)`**         | Panics if `v` is not in `a`.                               | `must.In(value, slice)`       | Ensures `v` is in `a`.              |
-| **`Contains(a []T, v T)`**   | Panics if `a` does not contain `v`.                        | `must.Contains(slice, value)` | Ensures `a` contains `v`.           |
+| **Function**                 | **Description**                                                 | **Example**                   | **Notes**                           |
+| ---------------------------- | --------------------------------------------------------------- | ----------------------------- | ----------------------------------- |
+| **`True(v bool)`**           | Panics if `v` is false.                                         | `must.True(isValid)`          | Validates if `v` is `true`.         |
+| **`Done(err error)`**        | Panics if `err` is not nil.                                     | `must.Done(err)`              | Ensures no error occurred.          |
+| **`Must(err error)`**        | Panics if `err` is not nil.                                     | `must.Must(err)`              | Same as `Done`.                     |
+| **`Nice(a V)`**              | Panics if `a` is zero.                                          | `must.Nice(value)`            | Ensures `a` is non-zero.            |
+| **`Zero(a V)`**              | Panics if `a` is not zero.                                      | `must.Zero(value)`            | Ensures `a` is zero.                |
+| **`None(a V)`**              | Panics if `a` is non-zero.                                      | `must.None(value)`            | Ensures `a` is zero.                |
+| **`Null[T any](v *T)`**      | Panics if `v` is not `nil`.                                     | `must.Null(data)`             | Checks typed nil.                   |
+| **`Full[T any](v *T) *T`**   | Panics if `v` is `nil`; returns `v` otherwise.                  | `must.Full(value)`            | Checks non-nil data.                |
+| **`Equals(a, b V)`**         | Panics if `a` and `b` are not the same.                         | `must.Equals(a, b)`           | Checks if `a` equals `b`.           |
+| **`Same(a, b V)`**           | Panics if `a` and `b` are not the same.                         | `must.Same(a, b)`             | Alias of `Equals`.                  |
+| **`SameNice(a, b V)`**       | Requires matching non-zero values; panics if a condition fails. | `must.SameNice(a, b)`         | Returns the matching value.         |
+| **`Sane(a, b V)`**           | Requires matching non-zero values; panics if a condition fails. | `must.Sane(a, b)`             | Alias of `SameNice`.                |
+| **`Diff(a, b V)`**           | Panics if `a` and `b` are the same.                             | `must.Diff(a, b)`             | Ensures values mismatch.            |
+| **`Different(a, b V)`**      | Panics if `a` and `b` are the same.                             | `must.Different(a, b)`        | Alias of `Diff`.                    |
+| **`Is(a, b V)`**             | Panics if `a` and `b` are not the same.                         | `must.Is(a, b)`               | Alias of `Equals`.                  |
+| **`Ise(err, target error)`** | Panics if `err` does not match `target` using `errors.Is`.      | `must.Ise(err, targetErr)`    | Matching like `errors.Is` function. |
+| **`Ok(a V)`**                | Panics if `a` is zero.                                          | `must.Ok(value)`              | Ensures `a` is non-zero.            |
+| **`OK(a V)`**                | Alias of `Ok`, checks non-zero value.                           | `must.OK(value)`              | Same as `Ok`.                       |
+| **`TRUE(v bool)`**           | Panics if `v` is false.                                         | `must.TRUE(isValid)`          | Alias of `True`.                    |
+| **`FALSE(v bool)`**          | Panics if `v` is true.                                          | `must.FALSE(failed)`          | Ensures `v` is `false`.             |
+| **`False(v bool)`**          | Panics if `v` is true.                                          | `must.False(failed)`          | Same as `FALSE`.                    |
+| **`Cause(err error)`**       | Panics if `err` is nil, returns the error.                      | `must.Cause(err)`             | Ensures error is present.           |
+| **`Wrong(err error)`**       | Panics if `err` is nil.                                         | `must.Wrong(err)`             | Ensures error is present.           |
+| **`Have(a []T)`**            | Panics if `a` has no elements.                                  | `must.Have(slice)`            | Ensures `a` is not vacant.          |
+| **`Length(a []T, n int)`**   | Panics if `a` length is not `n`.                                | `must.Length(slice, 3)`       | Ensures `a` length is `n`.          |
+| **`Len(a []T, n int)`**      | Alias of `Length`, ensures `a` length is `n`.                   | `must.Len(slice, 3)`          | Validates `a` length.               |
+| **`In(v T, a []T)`**         | Panics if `v` is not in `a`.                                    | `must.In(value, slice)`       | Ensures `v` is in `a`.              |
+| **`Contains(a []T, v T)`**   | Panics if `a` does not contain `v`.                             | `must.Contains(slice, value)` | Ensures `a` contains `v`.           |
 
 ### Boolean Package (`mustboolean`)
 
@@ -289,8 +304,8 @@ must.Done(err) // Panics if err is not nil
 **Check slice length:**
 
 ```go
-arr := []int{1, 2, 3}
-must.Length(arr, 3) // Panics if length is not 3
+items := []int{1, 2, 3}
+must.Length(items, 3) // Panics if length is not 3
 ```
 
 ### Common Validation Scenarios
@@ -311,7 +326,7 @@ muststrings.HasSuffix(filename, ".json")
 muststrings.Contains(filename, "data")
 ```
 
-**Pointer validation:**
+**Non-nil validation:**
 
 ```go
 account := findAccount(id)
@@ -396,10 +411,13 @@ Welcome to contribute to this project via submitting merge requests and reportin
 
 **Have Fun Coding with this package!** 🎉🎉🎉
 
-<!-- TEMPLATE (EN) END: STANDARD PROJECT FOOTER -->
+<!-- TEMPLATE (EN) CLOSE: STANDARD PROJECT FOOTER -->
 
 ---
+
+<!-- TEMPLATE (EN) BEGIN: GITHUB STARS -->
 
 ## GitHub Stars
 
 [![Stargazers](https://starchart.cc/yylego/must.svg?variant=adaptive)](https://starchart.cc/yylego/must)
+<!-- TEMPLATE (EN) CLOSE: GITHUB STARS -->

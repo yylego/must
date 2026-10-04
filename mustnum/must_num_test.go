@@ -50,8 +50,8 @@ func TestLt(t *testing.T) {
 	})
 }
 
-// TestLte tests numeric less-than-or-at-most assertion
-// Validates Lte passes when first value is less than / at most second and panics when greater
+// TestLte tests an inclusive maximum
+// Validates Lte passes when a <= b and panics when a > b
 //
 // TestLte 测试数值小于或等于断言
 // 验证 Lte 在第一个值小于或等于第二个值时通过，在大于时 panic
@@ -69,7 +69,7 @@ func TestLte(t *testing.T) {
 	})
 }
 
-// TestGt tests numeric greater-than assertion
+// TestGt tests an exclusive minimum
 // Validates Gt passes when first value exceeds second and panics when not
 //
 // TestGt 测试数值大于断言
@@ -87,7 +87,7 @@ func TestGt(t *testing.T) {
 	})
 }
 
-// TestGte tests numeric greater-than-or-at-least assertion
+// TestGte tests an inclusive minimum
 // Validates Gte passes when first value exceeds / matches second and panics when less
 //
 // TestGte 测试数值大于或等于断言

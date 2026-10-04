@@ -145,7 +145,7 @@ func Is[V comparable](a, b V) {
 // Ise 期望错误相等，类似于 errors.Is 的行为。如果错误不相等，则触发 panic。
 func Ise(err, target error) {
 	if !errors.Is(err, target) {
-		zaplog.ZAPS.Skip1.LOG.Panic("ERROR MISMATCH(NOT SAME ERROR)", zap.Error(err), zap.Error(target))
+		zaplog.ZAPS.Skip1.LOG.Panic("EXPECTED ERROR CHAIN TO MATCH TARGET", zap.NamedError("given", err), zap.NamedError("target", target))
 	}
 }
 

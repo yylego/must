@@ -1,4 +1,4 @@
-// Package utils provides internal testing of zero value utility functions
+// Package utils tests zero value support functions
 // Tests include generic zero value generation across different types
 //
 // utils 为零值工具函数提供内部测试

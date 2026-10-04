@@ -1,9 +1,12 @@
+<!-- TEMPLATE (ZH) BEGIN: BADGES -->
+
 [![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/yylego/must/release.yml?branch=main&label=BUILD)](https://github.com/yylego/must/actions/workflows/release.yml?query=branch%3Amain)
 [![GoDoc](https://pkg.go.dev/badge/github.com/yylego/must)](https://pkg.go.dev/github.com/yylego/must)
 [![Coverage Status](https://img.shields.io/coveralls/github/yylego/must/main.svg)](https://coveralls.io/github/yylego/must?branch=main)
-[![Supported Go Versions](https://img.shields.io/badge/Go-1.22%2C%201.23%2C%201.24%2C%201.25-lightgrey.svg)](https://go.dev/)
+[![Supported Go Versions](https://img.shields.io/badge/Go-1.22%2B-lightgrey.svg)](https://go.dev/)
 [![GitHub Release](https://img.shields.io/github/release/yylego/must.svg)](https://github.com/yylego/must/releases)
 [![Go Report Card](https://goreportcard.com/badge/github.com/yylego/must)](https://goreportcard.com/report/github.com/yylego/must)
+<!-- TEMPLATE (ZH) CLOSE: BADGES -->
 
 # must
 
@@ -17,17 +20,25 @@
 
 [ENGLISH README](README.md)
 
-<!-- TEMPLATE (ZH) END: LANGUAGE NAVIGATION -->
+<!-- TEMPLATE (ZH) CLOSE: LANGUAGE NAVIGATION -->
 
 ## 核心特性
 
-🎯 **失败即崩溃验证**: 干净的断言机制，条件违背时自动触发 panic
-⚡ **类型安全泛型**: 在所有断言类型上全面支持 Go 泛型
-🔄 **栈帧调整**: 通过智能 skip 配置提供精确的 panic 位置
-🌍 **结构化日志**: 与 zap 深度集成，提供详细的 panic 上下文
-📋 **领域专用包**: 针对数值、字符串、切片和映射的专业工具
+- 🎯 **断言检查**：检查失败时记录上下文并触发 panic。
+- ⚡ **Go 泛型**：通过类型参数支持多种输入类型。
+- 🔄 **栈帧调整**：通过 skip 配置定位调用代码。
+- 🌍 **结构化日志**：使用 Zap 记录 panic 上下文。
+- 📋 **领域专用包**：提供数值、字符串、切片和映射断言。
 
 ---
+
+## 使用边界
+
+- 断言失败会记录上下文并触发 panic，适用于条件不满足时必须中断当前操作的场景；可预期的失败应通过返回错误处理。
+- 日志可能包含输入值。敏感值使用 `mustsecret` 提供的断言，避免把值写入日志。
+- `Null` 和 `Full` 接收指针（`*T`）；字符串长度按字节计算，不是 Unicode 字符数。
+- 数值大小和正负断言拒绝 NaN。`Num` 支持其列出的整数、浮点类型及以这些类型为底层类型的自定义类型。
+- `mustmap.Get` 不限制值的类型，只检查键是否存在；键存在且值为 nil 时正常返回。
 
 ## 安装
 
@@ -99,7 +110,7 @@ func getAccount() *Account    { return &Account{Name: "test"} }
 
 ---
 
-### 示例 2: Rese 包函数
+### 示例 2: 结果提取函数
 
 ```go
 package main
@@ -111,7 +122,7 @@ import (
 )
 
 func main() {
-	fmt.Println("=== Demo 2: Rese 包 ===")
+	fmt.Println("=== Demo 2: 结果提取函数 ===")
 
 	// V1 - 单值验证
 	config := must.V1(readConfig())
@@ -177,6 +188,10 @@ func main() {
 	// 数值验证
 	score := getScore()
 	mustnum.Positive(score)
+	mustnum.NonNegative(0) // 接受零，拒绝负数及 NaN
+	mustnum.NonPositive(0) // 接受零与负数，拒绝 NaN
+	mustnum.ZeroPositive(0) // 与 NonNegative 等价
+	mustnum.ZeroNegative(0) // 与 NonPositive 等价
 	mustnum.Gt(score, 60)
 	fmt.Printf("✓ 分数: %d\n", score)
 
@@ -236,8 +251,8 @@ func getAnalytics() *Analytics {
 | **`Nice(a V)`**              | 如果 `a` 为零，触发 panic。                                   | `must.Nice(value)`            | 确保 `a` 非零。                 |
 | **`Zero(a V)`**              | 如果 `a` 不是零，触发 panic。                                 | `must.Zero(value)`            | 确保 `a` 为零。                 |
 | **`None(a V)`**              | 如果 `a` 非零，触发 panic。                                   | `must.None(value)`            | 确保 `a` 为零。                 |
-| **`Null(v any)`**            | 如果 `v` 不为 `nil`，触发 panic。                             | `must.Null(ptr)`              | 确保 `v` 为 `nil`。             |
-| **`Full(v any)`**            | 如果 `v` 为 `nil`，触发 panic。                               | `must.Full(value)`            | 确保 `v` 非 `nil`。             |
+| **`Null[T any](v *T)`**      | 如果指针 `v` 不为 `nil`，触发 panic。                         | `must.Null(data)`             | 检查指针为空。                  |
+| **`Full[T any](v *T) *T`**   | 如果指针 `v` 为 `nil`，触发 panic；否则返回该指针。           | `must.Full(value)`            | 检查指针非空。                  |
 | **`Equals(a, b V)`**         | 如果 `a` 和 `b` 不相等，触发 panic。                          | `must.Equals(a, b)`           | 检查 `a` 是否等于 `b`。         |
 | **`Same(a, b V)`**           | 如果 `a` 和 `b` 不相等，触发 panic。                          | `must.Same(a, b)`             | `Equals` 的别名。               |
 | **`SameNice(a, b V)`**       | 如果 `a` 和 `b` 不相等或为零，触发 panic。                    | `must.SameNice(a, b)`         | 确保相等且非零。                |
@@ -249,8 +264,8 @@ func getAnalytics() *Analytics {
 | **`Ok(a V)`**                | 如果 `a` 为零，触发 panic。                                   | `must.Ok(value)`              | 确保 `a` 非零。                 |
 | **`OK(a V)`**                | `Ok` 的别名，检查值是否非零。                                 | `must.OK(value)`              | 与 `Ok` 相同。                  |
 | **`TRUE(v bool)`**           | 如果 `v` 为 `false`，触发 panic。                             | `must.TRUE(isValid)`          | `True` 的别名。                 |
-| **`FALSE(v bool)`**          | 如果 `v` 为 `true`，触发 panic。                              | `must.FALSE(isError)`         | 确保 `v` 为 `false`。           |
-| **`False(v bool)`**          | 如果 `v` 为 `true`，触发 panic。                              | `must.False(isError)`         | 与 `FALSE` 相同。               |
+| **`FALSE(v bool)`**          | 如果 `v` 为 `true`，触发 panic。                              | `must.FALSE(failed)`          | 确保 `v` 为 `false`。           |
+| **`False(v bool)`**          | 如果 `v` 为 `true`，触发 panic。                              | `must.False(failed)`          | 与 `FALSE` 相同。               |
 | **`Cause(err error)`**       | 如果 `err` 为 `nil`，触发 panic，返回该错误。                 | `must.Cause(err)`             | 确保错误存在。                  |
 | **`Wrong(err error)`**       | 如果 `err` 为 `nil`，触发 panic。                             | `must.Wrong(err)`             | 确保错误存在。                  |
 | **`Have(a []T)`**            | 如果 `a` 为空，触发 panic。                                   | `must.Have(slice)`            | 确保 `a` 不为空。               |
@@ -289,8 +304,8 @@ must.Done(err) // 如果 err 非 nil 则 panic
 **检查切片长度：**
 
 ```go
-arr := []int{1, 2, 3}
-must.Length(arr, 3) // 如果长度不是 3 则 panic
+items := []int{1, 2, 3}
+must.Length(items, 3) // 如果长度不是 3 则 panic
 ```
 
 ### 常见验证场景
@@ -396,10 +411,13 @@ MIT 许可证 - 详见 [LICENSE](LICENSE)。
 
 **祝你用这个包编程愉快！** 🎉🎉🎉
 
-<!-- TEMPLATE (ZH) END: STANDARD PROJECT FOOTER -->
+<!-- TEMPLATE (ZH) CLOSE: STANDARD PROJECT FOOTER -->
 
 ---
+
+<!-- TEMPLATE (ZH) BEGIN: GITHUB STARS -->
 
 ## GitHub 标星点赞
 
 [![Stargazers](https://starchart.cc/yylego/must.svg?variant=adaptive)](https://starchart.cc/yylego/must)
+<!-- TEMPLATE (ZH) CLOSE: GITHUB STARS -->

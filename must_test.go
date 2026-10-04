@@ -198,7 +198,7 @@ func TestDifferent(t *testing.T) {
 	})
 }
 
-// TestIs tests value identity check
+// TestIs tests matching values
 // Checks Is passes when values match and panics when values mismatch
 //
 // TestIs 测试值一致性检查
@@ -215,7 +215,7 @@ func TestIs(t *testing.T) {
 }
 
 // TestIse tests error matching assertion using errors.Is
-// Validates Ise passes when errors match and panics when errors differ
+// Validates Ise passes when errors match and panics on mismatch
 //
 // TestIse 测试使用 errors.Is 的错误匹配断言
 // 验证 Ise 在错误匹配时通过，在错误不同时 panic
@@ -324,8 +324,8 @@ func TestWrong(t *testing.T) {
 	})
 }
 
-// TestHave tests slice non-empty assertion
-// Validates Have passes with non-empty slices and panics with empty slices
+// TestHave tests slices with items
+// Validates Have passes with items and panics without items
 //
 // TestHave 测试切片非空断言
 // 验证 Have 在非空切片时通过，在空切片时 panic
@@ -402,8 +402,8 @@ type Example struct {
 	S string // String field // 字符串字段
 }
 
-// TestNull tests nil ptr assertion
-// Checks Null passes with nil ptr and panics with non-nil pts
+// TestNull tests nil data
+// Checks Null passes with nil data and panics with non-nil data
 //
 // TestNull 测试 nil 指针断言
 // 检查 Null 在 nil 指针时通过，在非 nil 指针时 panic

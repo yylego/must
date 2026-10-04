@@ -45,7 +45,7 @@ func TestZero(t *testing.T) {
 }
 
 // TestSame_NewData tests secret value sameness assertion
-// Validates Same passes when values match and panics when values differ without logging data
+// Validates Same passes when values match and panics on mismatch without logging data
 //
 // TestSame_NewData 测试秘密值相同断言
 // 验证 Same 在值匹配时通过，在值不同时 panic，不记录数据

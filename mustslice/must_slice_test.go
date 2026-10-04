@@ -1,5 +1,5 @@
 // Package mustslice_test provides comprehensive testing of mustslice assertion package
-// Tests include slice equality, difference validation, element containment, and length checking
+// Tests include slice matching, difference validation, element containment, and length checking
 // Checks each assertion functions with both success and failure cases
 //
 // mustslice_test 为 mustslice 断言包提供全面的测试
@@ -14,8 +14,8 @@ import (
 	"github.com/yylego/must/mustslice"
 )
 
-// TestEquals tests slice equality assertion
-// Validates Equals passes when slices have same content and panics when slices differ
+// TestEquals tests matching slices
+// Validates Equals passes when slices have same content and panics on mismatch
 //
 // TestEquals 测试切片相等断言
 // 验证 Equals 在切片内容相同时通过，在切片不同时 panic
@@ -28,7 +28,7 @@ func TestEquals(t *testing.T) {
 }
 
 // TestDiff tests slice difference assertion
-// Validates Diff passes when slices differ and panics when slices are same
+// Validates Diff passes on mismatch and panics when slices are same
 //
 // TestDiff 测试切片差异断言
 // 验证 Diff 在切片不同时通过，在切片相同时 panic
@@ -41,7 +41,7 @@ func TestDiff(t *testing.T) {
 }
 
 // TestDifferent tests slice difference assertion
-// Validates Different passes when slices differ and panics when slices are same
+// Validates Different passes on mismatch and panics when slices are same
 //
 // TestDifferent 测试切片差异断言
 // 验证 Different 在切片不同时通过，在切片相同时 panic
@@ -79,8 +79,8 @@ func TestIn(t *testing.T) {
 	})
 }
 
-// TestNice tests non-empty slice assertion with return
-// Validates Nice returns non-empty slices and panics with empty slices
+// TestNice tests slices with items and returns the slice
+// Validates Nice returns slices with items and panics without items
 //
 // TestNice 测试非空切片断言并返回
 // 验证 Nice 返回非空切片并在空切片时 panic
@@ -92,8 +92,8 @@ func TestNice(t *testing.T) {
 	})
 }
 
-// TestZero tests empty slice assertion
-// Validates Zero passes with empty slices and panics with non-empty slices
+// TestZero tests vacant slices
+// Validates Zero passes without items and panics with items
 //
 // TestZero 测试空切片断言
 // 验证 Zero 在空切片时通过，在非空切片时 panic
@@ -115,8 +115,8 @@ func TestZero(t *testing.T) {
 	})
 }
 
-// TestNone tests empty slice assertion (alias of Zero)
-// Validates None passes with empty slices and panics with non-empty slices
+// TestNone tests vacant slices (alias of Zero)
+// Validates None passes without items and panics with items
 //
 // TestNone 测试空切片断言（Zero 的别名）
 // 验证 None 在空切片时通过，在非空切片时 panic
@@ -128,8 +128,8 @@ func TestNone(t *testing.T) {
 	})
 }
 
-// TestHave tests slice non-empty assertion
-// Validates Have passes with non-empty slices and panics with empty slices
+// TestHave tests slices with items
+// Validates Have passes with items and panics without items
 //
 // TestHave 测试切片非空断言
 // 验证 Have 在非空切片时通过，在空切片时 panic
